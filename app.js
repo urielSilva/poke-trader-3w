@@ -82,18 +82,28 @@ var pool  = mysql.createPool({
 });
 
 
-const connection = pool.getConnection();
-
-//Validamos se conectou no BD
-connection.connect(function (error) {
-    if (!!error)
-        console.log('Erro ao conectar no BD:', error);
+const connection = pool.getConnection(function(error, connection) {
+    if (error)
+        console.log('Connection error: ', error);
     else
         console.log('Desenvolvido por : efrancabr@gmail.com');
         console.log('Servidor host    :', connection.config.host);
         console.log('Banco de dados   :', connection.config.database);
         console.log('----------------------------------------------');
+
+//    connection.release();
 });
+
+//Validamos se conectou no BD
+//connection.connect(function (error) {
+//    if (!!error)
+//        console.log('Erro ao conectar no BD:', error);
+//    else
+//        console.log('Desenvolvido por : efrancabr@gmail.com');
+//        console.log('Servidor host    :', connection.config.host);
+//        console.log('Banco de dados   :', connection.config.database);
+//        console.log('----------------------------------------------');
+//});
 
 // A variável "db" global recebe a conexão
 global.db = connection;
