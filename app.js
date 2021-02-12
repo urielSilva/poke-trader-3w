@@ -1,7 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
-const mysql = require('mysql2');
 const path = require('path');
 const redis = require('redis');
 const session = require('express-session');
@@ -68,45 +67,12 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(fileUpload());
 
 //================================================================== Conexão ao Banco de dados
-
 var config = require('./database/config');
-//const connection = mysql.createConnection(config);
 
-
-var pool  = mysql.createPool({
-  connectionLimit : 10,
-  host: config.host,
-  user: config.user,
-  password: config.password,
-  database: config.database
-});
-
-
-const connection = pool.getConnection(function(error, connection) {
-    if (error)
-        console.log('Connection error: ', error);
-    else
-        console.log('Desenvolvido por : efrancabr@gmail.com');
-        console.log('Servidor host    :', connection.config.host);
-        console.log('Banco de dados   :', connection.config.database);
-        console.log('----------------------------------------------');
-
-//    connection.release();
-});
-
-//Validamos se conectou no BD
-//connection.connect(function (error) {
-//    if (!!error)
-//        console.log('Erro ao conectar no BD:', error);
-//    else
-//        console.log('Desenvolvido por : efrancabr@gmail.com');
-//        console.log('Servidor host    :', connection.config.host);
-//        console.log('Banco de dados   :', connection.config.database);
-//        console.log('----------------------------------------------');
-//});
-
-// A variável "db" global recebe a conexão
-global.db = connection;
+console.log('Desenvolvido por : efrancabr@gmail.com');
+console.log('Servidor host    :', config.host);
+console.log('Banco de dados   :', config.database);
+console.log('----------------------------------------------');
 
 //================================================================== Servidor http
 var port = process.env.PORT || 8000;

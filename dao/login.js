@@ -23,12 +23,12 @@ module.exports = {
         var username = req.body.usuario;
         var password = req.body.senha;
 
-        let sql = "SELECT * FROM tb_usuario WHERE " +
-            "usuario = '" + username + "' AND " +
-            "senha = '" + password + "'";
+        (async () => {
 
-        //Valida e executa o login na aplicação
-        db.query(sql, (err, results, fields) => {
+            const loginDB = require('../dao/loginDados');
+
+            //Valida e executa o login na aplicação
+            var results = await loginDB.obter(username, password );
 
             //Verifica se usuário e senha digitados conferem
             if (results.length > 0) {
@@ -86,7 +86,7 @@ module.exports = {
                 });
                 res.end();
             }
-        });
+        })();
     },
 
     pageAdmin: (req, res) => {

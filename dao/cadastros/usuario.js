@@ -1,10 +1,10 @@
-//NPM Install
 const fse = require('fs-extra');
 
 //Importando arquivo site-model.js que possui a classe com as funções de consulta
 const DB = require('./../listas/selects');
 const mysql = require('mysql2');
 const config = require('./../../database/config');
+
 const conn = mysql.createConnection(config);
 
 //Importando o móduto routes/login.js 
