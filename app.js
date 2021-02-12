@@ -87,7 +87,7 @@ connection.connect(function (error) {
 global.db = connection;
 
 //================================================================== Servidor http
-var port = 8000;
+var port = process.env.PORT || 8000;
 
 /**
  * Ao acessar o sistema vai entrar no routes/rotas e 
