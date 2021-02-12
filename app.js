@@ -29,10 +29,16 @@ if (process.env.REDISTOGO_URL) {
     var redisClient = require("redis").createClient(rtg.port, rtg.hostname);
 
     redisClient.auth(rtg.auth.split(":")[1]);
+    let RedisStore = require('connect-redis')(session);
 
     app.use(
         session({
-            store: new RedisStore({ client: redisClient })
+            store: new RedisStore({ client: redisClient }),
+            host: rtg.hostname,
+            port: rtg.port,
+            secret: 'efs',
+            resave: true,
+            saveUninitialized: true
         })
     );
 
