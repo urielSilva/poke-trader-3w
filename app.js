@@ -99,7 +99,7 @@ const rotas = require('./route/rotas')(io);
 app.use('/', rotas);
 
 /* Inicia a o servidor Node.JS */
-server.listen( host, port, () => {
+server.listen( port, host, () => {
     console.log('----------------------------------------------');
     console.log('Endereço do site : localhost:', port);
 });
