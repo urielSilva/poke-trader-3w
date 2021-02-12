@@ -72,7 +72,7 @@ app.use(fileUpload());
 var config = require('./database/config');
 const connection = mysql.createConnection(config);
 
-connection = mysql.createPool({
+connection.createPool({
     host: config.host,
     user: config.user,
     password: config.password,
