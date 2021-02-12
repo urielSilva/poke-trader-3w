@@ -1,7 +1,7 @@
 {
-  "name": "LSheets",
+  "name": "Pokemon-Trader",
   "version": "1.0.0",
-  "description": "LSheets",
+  "description": "Pokemon Trader - Sistema de troca de pokemons",
   "main": "app.js",
   "scripts": {
     "start": "nodemon app.js",
