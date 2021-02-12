@@ -87,8 +87,8 @@ connection.connect(function (error) {
 global.db = connection;
 
 //================================================================== Servidor http
-var host = '0.0.0.0';         
 var port = process.env.PORT || 8000;
+var serverName = process.env.HOST;
 
 /**
  * Ao acessar o sistema vai entrar no routes/rotas e 
@@ -99,9 +99,9 @@ const rotas = require('./route/rotas')(io);
 app.use('/', rotas);
 
 /* Inicia a o servidor Node.JS */
-server.listen( port, host, () => {
+server.listen( port, () => {
     console.log('----------------------------------------------');
-    console.log('Endereço do site : localhost:', port);
+    console.log('Endereço do site : '+serverName , port);
 });
 
 //================================================================== Fim
