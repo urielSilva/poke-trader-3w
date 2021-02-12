@@ -24,18 +24,33 @@ app.set("views", path.join(__dirname, "view"));
 app.set("view engine", "ejs");
 
 //Criando a sessão redis
-let RedisStore = require('connect-redis')(session);
-let redisClient = redis.createClient();
-app.use(
-    session({
-        store: new RedisStore({ client: redisClient }),
-        host: 'ec2-34-236-26-16.compute-1.amazonaws.com',
-        port: 14109,
-        secret: 'p8359f4458637802e804905bee88a4ceb3237dd393e7255487e7b9b512baf3f3c',
-        resave: true,
-        saveUninitialized: true
-    })
-);
+if (process.env.REDISTOGO_URL) {
+    var rtg   = require("url").parse(process.env.REDISTOGO_URL);
+    var redisClient = require("redis").createClient(rtg.port, rtg.hostname);
+
+    redisClient.auth(rtg.auth.split(":")[1]);
+
+    app.use(
+        session({
+            store: new RedisStore({ client: redisClient })
+        })
+    );
+
+} else {
+    let RedisStore = require('connect-redis')(session);
+    let redisClient = redis.createClient();
+
+    app.use(
+        session({
+            store: new RedisStore({ client: redisClient }),
+            host: 'ec2-34-236-26-16.compute-1.amazonaws.com',
+            port: 14109,
+            secret: 'p8359f4458637802e804905bee88a4ceb3237dd393e7255487e7b9b512baf3f3c',
+            resave: true,
+            saveUninitialized: true
+        })
+    );
+}
 
 //Globais
 app.locals.moment = require('moment');
@@ -66,7 +81,7 @@ connection.connect(function (error) {
 global.db = connection;
 
 //================================================================== Servidor http
-var port = 3001;
+var port = 80;
 
 /**
  * Ao acessar o sistema vai entrar no routes/rotas e 
