@@ -29,9 +29,9 @@ let redisClient = redis.createClient();
 app.use(
     session({
         store: new RedisStore({ client: redisClient }),
-        host: 'localhost',
-        port: 6379,
-        secret: 'argenton123*',
+        host: 'ec2-34-236-26-16.compute-1.amazonaws.com',
+        port: 14109,
+        secret: 'p8359f4458637802e804905bee88a4ceb3237dd393e7255487e7b9b512baf3f3c',
         resave: true,
         saveUninitialized: true
     })
