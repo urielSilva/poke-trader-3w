@@ -70,15 +70,14 @@ app.use(fileUpload());
 //================================================================== Conexão ao Banco de dados
 
 var config = require('./database/config');
-// const connection = mysql.createConnection(config);
+const connection = mysql.createConnection(config);
 
-var connection = mysql.createPool({
+connection = mysql.createPool({
     host: config.host,
     user: config.user,
     password: config.password,
     database: config.database
   });
-
 
 //Validamos se conectou no BD
 connection.connect(function (error) {
