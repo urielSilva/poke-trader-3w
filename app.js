@@ -75,7 +75,7 @@ console.log('Banco de dados   :', config.database);
 console.log('----------------------------------------------');
 
 //================================================================== Servidor http
-var port = process.env.PORT || 8000;
+var port = process.env.PORT || 3000;
 var serverName = process.env.HOST;
 
 /**

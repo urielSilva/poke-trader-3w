@@ -24,8 +24,7 @@ module.exports = {
         var password = req.body.senha;
 
         (async () => {
-
-            const loginDB = require('../dao/loginDados');
+            const loginDB = require('../database/db_login');
 
             //Valida e executa o login na aplicação
             var results = await loginDB.obter(username, password );
