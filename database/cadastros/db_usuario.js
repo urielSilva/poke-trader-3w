@@ -6,7 +6,7 @@ async function obter( id_usuario ){
     return rows;
 }
 
-async function obterTodos(   ){
+async function obterTodos(){
     const conn = await db.connect();
     const [rows] = await conn.query('SELECT * FROM tb_usuario ;');
     return rows;

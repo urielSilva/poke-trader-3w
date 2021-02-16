@@ -25,23 +25,24 @@ module.exports = (io) => { //Aqui recebo o socket.io lá do app.js
 
     //================================================================== CADASTROS
     //Rotas para a página de "Cadastro de Usuário"
-    const { pageUsuario, addUsuario, editUsuario, delUsuario, } = require('../dao/cadastros/usuario.js');
+    const { pageUsuario, addUsuario, editUsuario, delUsuario } = require('../dao/cadastros/usuario.js');
     rotas.get('/usuario', pageUsuario); //localhost:3000/usuario (ao clicar no menu da sidebar: Cadastros > Usuário (C"R"UD))
     rotas.post('/addUsuario', addUsuario); //Usado no post do botão "Salvar" do modal que cadastra um novo registro ("C"RUD)
     rotas.post('/editUsuario/:id', editUsuario); //Usado no post do botão "Salvar" do modal que altera um registro (CR"U"D)
     rotas.get('/delUsuario/:id', delUsuario); //Usado no get do botão "Sim, eliminar" do modal que deleta um registro (CRU"D")
 
     //Rotas para a página de "Cadastro de Material"
-    const { pageMaterial, addMaterial, editMaterial, delMaterial, } = require('../dao/cadastros/material.js');
+    const { pageMaterial, addMaterial, editMaterial, delMaterial } = require('../dao/cadastros/material.js');
     rotas.get('/material', pageMaterial); //localhost:3000/material (ao clicar no menu da sidebar: Cadastros > Material (C"R"UD))
     rotas.post('/addMaterial', addMaterial); //Usado no post do botão "Salvar" do modal que cadastra um novo registro ("C"RUD)
     rotas.post('/editMaterial/:id', editMaterial); //Usado no post do botão "Salvar" do modal que altera um registro (CR"U"D)
     rotas.get('/delMaterial/:id', delMaterial); //Usado no get do botão "Sim, eliminar" do modal que deleta um registro (CRU"D")
 
     //Rotas para a página de "Cadastro de Pokemons"
-    const { pagePokemon } = require('../dao/cadastros/pokemon.js');
+    const { pagePokemon,addPokemon, searchPokemon } = require('../dao/cadastros/pokemon.js');
     rotas.get('/pokemon', pagePokemon); 
-//    rotas.post('/addPokemon', addPokemon); 
+    rotas.post('/addPokemon', addPokemon); 
+    rotas.get('/searchpokemon/:id', searchPokemon);
 //    rotas.post('/editPokemon/:id', editPokemon); 
 //    rotas.get('/delPokemon/:id', delPokemon);
 
