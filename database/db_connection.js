@@ -6,7 +6,9 @@ async function connect(){
         return global.connection;
     //--
     
-    const connection = await mysql.createConnection( config );
+    const connection = mysql.createPool(config);
+
+//    const connection = await mysql.createConnection( config );
     console.log("Conectou no MySQL!");
     global.connection = connection;
 
