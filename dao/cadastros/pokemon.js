@@ -3,8 +3,7 @@ const fse = require('fs-extra');
 //Importando arquivo site-model.js que possui a classe com as funções de consulta
 const FUNCOES = require('./../util/funcoes');
 const pokemonDB = require('./../../database/cadastros/db_pokemon');
-const api_pokemnon = require( './../../services/pokemon/api_pokemon' );
-
+const downloadIMG = require( './../../services/pokemon/download_images' );
 
 //Variáveis a serem utilizadas
 var status_Crud = '';
@@ -25,6 +24,7 @@ module.exports = {
             //Passa o conteúdo das variáveis para a página principal
             res.render('./pageAdmin', {
                 DTPokemon: results,
+                OPokemon : '',
                 status_Crud,
                 cod_login: req.session.cod_login,
                 nome_login: req.session.nome_login,
@@ -51,68 +51,65 @@ module.exports = {
     addPokemon: (req, res) => {
         (async () => {
             //Verifica se selecionou uma imagem
-            if (!req.files) {
-                //Se não selecionou, executa INSERT com imagem genérica
-//                let nome = req.body.nome_ADD.trim();
-//                let desecricao = req.body.descricao_ADD.trim();
-//                let quantidade = req.body.quantidade_ADD.trim();
+            
+            //Se não selecionou, executa INSERT com imagem genérica
+            let id_usuario = req.session.cod_login;
+            let id_pokemon = req.body.id_pokemon_BUSCA.trim();
+            let nome = req.body.nome_BUSCA.trim();
+            let descricao = req.body.descricao_BUSCA.trim();
+            let experiencia_base = req.body.experiencia_base_BUSCA.trim();
+            let url_foto = req.body.urlFoto_BUSCA ;
 
+            var quantidade = 1;
+            var cadNovo = false;
 
-              //  const lista = await api_pokemnon.retornarLista();   
-    
-               // console.log( lista );
+            //Definindo nome da imagem conforme arquivo selecionado
 
+            let image_name = 'img_pokemon_' + nome.replace(/ /g, "_") + '.PNG';
 
-            //    const apenasum = await api_pokemnon.retornarUm( 'bulbasaur' );   
-    
-             //   console.log( apenasum );
+            console.log(  image_name );
 
-                //Atribuindo o conteúdo central
-                page = './includes/cadastros/inc_pokemon';
+            obUsuarioPokemon = { "id_usuario" : id_usuario, "id_pokemon":id_pokemon, "foto" : image_name, "nome":nome,  "descricao" : descricao, "experiencia_base" : experiencia_base };
 
-                //Verifica se o registro adicionado já existe
+            //-- Verificar se o pokemon já existe na base local
+            const cadPokemonBusca = await pokemonDB.obter( id_pokemon ); 
+            if(cadPokemonBusca.length <= 0){
 
+                //-- Download da foto do bicho
+                let dowImg = await downloadIMG.download_image(url_foto, 'public/dist/img/pokemons/'+image_name);
 
-                
+                console.log( dowImg ); 
+
+                //-- Cadastrar pokemon 
+                const cadPokemonInc = await pokemonDB.incluir( obUsuarioPokemon  ); 
+                //-- Já atribui o Pokemon para o usuário 
+                const cadUsPokemoInc = await pokemonDB.incluirUsuarioPokemon(  id_usuario, id_pokemon, quantidade );   
+                cadNovo = true;
+
+            }else{
+                const cadPokemonAlt = await pokemonDB.alterar( id_pokemon, obUsuarioPokemon  );
             }
-        })();//async
-    },
-    searchPokemon: (req, res) => {
-        (async () => {
-            //Verifica se selecionou uma imagem
-                //Se não selecionou, executa INSERT com imagem genérica
-                let id_pokemon = req.params.id;
 
-                //Atribuindo o conteúdo central
-                page = './includes/cadastros/inc_pokemon';
+            //--
 
-    
-                try {
-                    const result = await api_pokemnon.retornarUm( id_pokemon );   
-                  
-                    console.log( result.id);
-                    console.log( result.name );
-                    console.log( result.base_experience );
-                    console.log( result.sprites.front_default  ) ;
+            if( cadNovo === false  ){
+                //-- Verificar se usuario já possui um pokemos do mesmot tipo
+                var _buscaPokemon = await pokemonDB.obterUsuarioPokemon( id_usuario, id_pokemon ); 
 
-                    req.session.nome_BUSCA = result.id;
- //                   req.session.nome_login = nome;
-  //                  req.session.foto_login = image_name;
-  //                  req.session.usuario_login = usuario;
-  //                  req.session.perfil_login = perfil;
-
-
-                    
-                } catch (error) {
-                    console.log('Erro 003: ', error);
-                    status_Crud = 'nao';
-                    res.redirect('/pokemon');
+                if(_buscaPokemon.length > 0)
+                {
+                    quantidade += _buscaPokemon[0].quantidade;
+                    //-- Atualiza a quantidade
+                    const cadUsPokemoAlt = await pokemonDB.alterarUsuarioPokemon( id_usuario, id_pokemon, quantidade ); 
+                }else{
+                    const cadUsPokemoInc = await pokemonDB.incluirUsuarioPokemon(  id_usuario, id_pokemon, quantidade );   
                 }
-
-
-
-                //Verifica se o registro adicionado já existe
-        
+                //--
+            }
+    
+           //Atribuindo o conteúdo central
+            page = './includes/cadastros/inc_pokemon';
+            
         })();//async
     },
 

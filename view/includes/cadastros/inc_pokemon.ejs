@@ -193,10 +193,42 @@
                                                     <input type="search" id="id_BUSCA" class="form-control" />
                                                 </div>
                                                     <button type="button" class="btn btn-primary" onclick="(function() {
-                                                            window.location = '/searchpokemon/' + document.getElementById('id_BUSCA').value;
-                                                        } , function(){  alert(' Show!!')   }   )()" id="btnBusca" > <i class="fas fa-search"></i> 
-                                                    </button>
+                                                            var idPokemon = document.getElementById('id_BUSCA').value;
+                                                            idPokemon = idPokemon.toLowerCase();
 
+                                                            document.getElementById('nome_BUSCA').value = '';
+                                                            document.getElementById('descricao_BUSCA').value = '';
+                                                            document.getElementById('experiencia_base_BUSCA').value = '';
+                                                            document.getElementById('foto_BUSCA').src = '';
+
+                                                            var link = 'https://pokeapi.co/api/v2/pokemon/'+ idPokemon;
+
+                                                            $.ajax({
+                                                                url: link,
+                                                                type: 'GET',
+                                                                dataType: 'json',
+                                                                }).done(function( data ) {
+                                                                    console.log('success');
+
+                                                                    const v_description = 'Esta epécie conta com os seguintes atributos: abilidade: '+data.abilities[0].ability.name+', movimento: '+ data.moves[0].move.name;
+
+                                                                    document.getElementById('id_pokemon_BUSCA').value = data.id;
+                                                                    document.getElementById('nome_BUSCA').value = data.name;
+                                                                    document.getElementById('descricao_BUSCA').value = v_description;
+                                                                    document.getElementById('experiencia_base_BUSCA').value = data.base_experience;
+                                                                    document.getElementById('foto_BUSCA').src = data.sprites.front_default;
+                                                                    document.getElementById('urlFoto_BUSCA').value = data.sprites.front_default;
+
+                                                                }).fail(function() {
+                                                                    alert( 'Informação não encontrada!!' );
+                                                                    console.log('error');
+                                                                }).always(function() {
+                                                                    console.log('complete');
+                                                                });
+
+
+                                                        })()" id="btnBusca" > <i class="fas fa-search"></i> 
+                                                    </button>
                                                 </div>
 
                                                 <hr class="mt-5 mb-5">
@@ -209,7 +241,7 @@
                                                             style="align-items: center;display: inline-grid;">
         
                                                             <!-- Imagem e opção para zoom -->
-                                                            <img class="img-thumbnail-usuario mx-auto d-block" name="foto_BUSCA" id="foto_BUSCA" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/110.png">
+                                                            <img class="img-thumbnail-usuario mx-auto d-block" name="foto_BUSCA" id="foto_BUSCA" src="dist/img/generic/usuario-no-image.png">
         
                                                             <!-- Elemento input file oculto -->
                                                             <div class="custom-file" style="display: none;">
@@ -221,7 +253,7 @@
                                                                             if (FileReader && files && files.length) {
                                                                                 var fr = new FileReader();
                                                                                 fr.onload = function () {                                                                        
-                                                                                document.getElementById('foto_BUSCA').src = fr.result;                                                                
+                                                                                    document.getElementById('foto_BUSCA').src = fr.result;                                                                
                                                                                 }                                  
                                                                             fr.readAsDataURL(files[0]);
                                                                             }
@@ -236,7 +268,31 @@
                                                         <div class="row">
                                                             <!-- Nome -->
                                                             <div class="col-sm-26">
-        
+
+                                                                <!-- Id Pokemon -->
+                                                                <div class="row">
+                                                                    <div class="col-sm-12">
+                                                                        <div class="form-group">
+                                                                            <label for="id_pokemon_BUSCA" class="label">Id</label>
+                                                                            <input type="text" class="form-control form-control-sm"
+                                                                                name="id_pokemon_BUSCA" id="id_pokemon_BUSCA"
+                                                                                placeholder="Id" readonly=“true”>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <!-- Controle de Imagem invisível -->
+                                                                <div class="row">
+                                                                    <div class="col-sm-12">
+                                                                        <div class="form-group">
+                                                                            <label for="urlFoto_BUSCA" class="label">foto_busca</label>
+                                                                            <input type="hidden" class="form-control form-control-sm "
+                                                                                name="urlFoto_BUSCA" id="urlFoto_BUSCA"
+                                                                                placeholder="Nome" readonly=“true”>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
                                                                 <!-- Nome -->
                                                                 <div class="row">
                                                                     <div class="col-sm-12">
@@ -280,8 +336,8 @@
                                     <!-- Botões -->
                                     <div class="modal-footer justify-content-between">
                                         <button type="submit" class="btn btn-primary" id="btnSalvar_ADD">&nbsp;&nbsp;Salvar&nbsp;&nbsp;</button>
-                                        <button type="button" class="btn btn-secondary"
-                                            data-dismiss="modal">Cancelar</button>
+                                        <button type="button" class="btn btn-secondary"  onclick="(function() {
+                                            window.location.reload(); })()"  data-dismiss="modal" >Fechar</button>
                                     </div>
                                 </form>
                             </div>
@@ -404,15 +460,12 @@
 
                                     <!-- Botões -->
                                     <div class="modal-footer justify-content-between">
-                                        <button type="button" class="btn btn-secondary"
-                                            data-dismiss="modal">Fechar</button>
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
                                     </div>
                                 </form>
                             </div>
                         </div>
                     </div>
-                   
-                    
                 </div>
             </div>
         </div>

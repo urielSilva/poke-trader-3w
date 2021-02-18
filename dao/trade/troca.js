@@ -3,9 +3,8 @@ const fse = require('fs-extra');
 //Importando arquivo site-model.js que possui a classe com as funções de consulta
 const DB = require('./../listas/selects');
 const FUNCOES = require('./../util/funcoes');
-const mysql = require('mysql2');
 const config = require('./../../database/config');
-const conn = mysql.createConnection(config);
+const pokemonDB = require('./../../database/cadastros/db_pokemon');
 
 //Variáveis a serem utilizadas
 var status_Crud = '';
@@ -21,10 +20,9 @@ module.exports = {
             //Atribuindo o conteúdo central
             page = './includes/trade/inc_troca';
 
-            //Consulta tabela para popular conteúdo da tabela
-//            let query = "SELECT * FROM `tb_usuario_pokemon` ORDER BY id_pokemon, id_usuario DESC";
+                //Consulta tabela para popular conteúdo da tabela
+                var results = await pokemonDB.obterUsuarioPokemonTodosMenosEu( req.session.cod_login );
 
-//            db.query(query, (err, results, fields) => {
 
                 //Passa o conteúdo das variáveis para a página principal
                 res.render('./pageAdmin', {
@@ -48,14 +46,13 @@ module.exports = {
                     CadTroca:'active'
                 });
 
-                 console.log('Teste');
-                 console.log( res ) ;  
+//                 console.log('Teste');
+//                 console.log( res ) ;  
 
 
                 //Reinicia a variável
                 status_Crud = '';
-            });
-//        })();
+        })();
     },
 
 
