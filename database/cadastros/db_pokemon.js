@@ -61,7 +61,7 @@ async function obterUsuarioPokemonTodos(id_usuario ){
 
 async function obterUsuarioPokemonTodosMenosEu(id_usuario ){
     const conn = await db.connect();
-    const [rows] = await conn.query('SELECT  up.id_pokemon  , up.id_usuario, p.foto, p.nome , p.descricao , up.quantidade , up.quantidade * p.experiencia_base AS total_experiencia , up.data_inclusao , up.data_atualizacao FROM `tb_usuario_pokemon` up JOIN  tb_pokemon p ON p.id_pokemon = up.id_pokemon  where id_usuario <> ?  ORDER BY id_pokemon DESC;',  [id_usuario]);
+    const [rows] = await conn.query('SELECT u.cod as id_usuario, u.usuario,  up.id_pokemon  , up.id_usuario, p.foto, p.nome , p.descricao , up.quantidade , up.quantidade * p.experiencia_base AS total_experiencia , up.data_inclusao , up.data_atualizacao FROM `tb_usuario_pokemon` up JOIN  tb_pokemon p ON p.id_pokemon = up.id_pokemon join tb_usuario u on u.cod = up.id_usuario where id_usuario <> ?  ORDER BY id_pokemon DESC;',  [id_usuario]);
 
     return rows;
 }

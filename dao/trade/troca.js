@@ -5,6 +5,7 @@ const DB = require('./../listas/selects');
 const FUNCOES = require('./../util/funcoes');
 const config = require('./../../database/config');
 const pokemonDB = require('./../../database/cadastros/db_pokemon');
+const usuarioDB = require('./../../database/cadastros/db_usuario');
 
 //Variáveis a serem utilizadas
 var status_Crud = '';
@@ -22,11 +23,14 @@ module.exports = {
 
                 //Consulta tabela para popular conteúdo da tabela
                 var results = await pokemonDB.obterUsuarioPokemonTodosMenosEu( req.session.cod_login );
-
+                var lsUsuarios = await usuarioDB.obterTodos();
+                var lsMeusPokemons = await pokemonDB.obterUsuarioPokemonTodos( req.session.cod_login );
 
                 //Passa o conteúdo das variáveis para a página principal
                 res.render('./pageAdmin', {
                     DTPokemon: results,
+                    DTMeusPOkemons : lsMeusPokemons,
+                    DTUsuario: lsUsuarios,
                     status_Crud,
                     cod_login: req.session.cod_login,
                     nome_login: req.session.nome_login,
@@ -45,10 +49,6 @@ module.exports = {
                     TradeOpen: 'menu-open',
                     CadTroca:'active'
                 });
-
-//                 console.log('Teste');
-//                 console.log( res ) ;  
-
 
                 //Reinicia a variável
                 status_Crud = '';

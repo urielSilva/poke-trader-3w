@@ -30,11 +30,29 @@
                     <!-- ######################################################################### Cabeçalho -->
                     <div class="card-header">
 
+                        <div class="btn-group">
+
+                            <label for="usuario_troca_filter_ADD" class="label">Filtre o usuário / Jogador: </label>&nbsp;&nbsp;
+
+                            <select class="form-control form-control-sm select2"
+                                  style="width: auto;" name="usuario_troca_filter_ADD"
+                                  id="usuario_troca_filter_ADD"
+                                  onchange="filtrarUsuario(this)" >
+                                  <option value="">-- Selecione --</option>
+                                  <% DTUsuario.forEach((row, index) => { %>
+                                    <option value="<%= row.familia %>"><%= row.usuario %>
+                                    </option>
+                                  <% }) %>
+
+                              </select>&nbsp;
+                        </div>
+
                         <!-- Botões -->
                         <div class="btn-group">
                             <!-- Abre o modal para INSERT -->
-                            <button type="button" class="btn btn-sm btn-outline-primary" data-toggle="modal"
-                                data-target="#modalADD">&nbsp;Trocar&nbsp;
+                            <button type="button" id="btn_Trocar" class="btn btn-sm btn-outline-primary" data-toggle="modal"
+                                data-target="#modalTROCAR" onclick="( function(){  document.getElementById('dados_TROCA').value = '1,10,15'; 
+                            })()"   >&nbsp;Trocar&nbsp;
                             </button>
                         </div>
 
@@ -72,112 +90,188 @@
                                 <i class="fas fa-times"></i>
                             </button>
                         </div>
-
                     </div>
 
-                    <!-- ######################################################################### Tabela -->
-                    <div class="card-body">
 
-                        <% if (DTPokemon.length > 0) {%>
-                            <table id="TBtable" class="table table-hover">
-    
-                                <!-- Cabeçalho: Titulos da tabela -->
-                                <thead class="thead-light">
-                                    <tr>
-                                        <th scope="col">Seleção</th>
-                                        <th scope="col">Id Usuário</th>
-                                        <th scope="col">Usuário</th>
-                                        <th scope="col">Id Pokemon</th>
-                                        <th scope="col">Foto</th>
-                                        <th scope="col">Nome</th>
-                                        <th scope="col">Descricao</th>
-                                        <th scope="col">Quantidade</th>
-                                        <th scope="col">Experiencia</th>
-                                        <th scope="col">Opcoes</th>
-                                    </tr>
-                                </thead>
-    
-                                <tbody>
-                                    <!-- Detalhes: Dados da tabela -->
-                                    <% DTPokemon.forEach((row, index) => { %>
-                                    <tr>
-                                        <td><input type="checkbox" name=""></td>
+                    <div class="panel panel-primary">
+                        <div class="panel-body scrollable-panel" style="overflow-y: scroll; height:350px; width: auto;">
 
-                                        <td>123456</td>
+                            <!-- ######################################################################### Tabela -->
+                            <div class="card-body">
 
-                                        <td>Jose da Silva</td>
+                                <% if (DTPokemon.length > 0) {%>
+                                    <table id="TBtable" class="table table-hover">
+            
+                                        <!-- Cabeçalho: Titulos da tabela -->
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th scope="col">Seleção</th>
+                                                <th scope="col">Trocar</th>
+                                                <th scope="col">Id Usuário</th>
+                                                <th scope="col">Usuário</th>
+                                                <th scope="col">Id Pokemon</th>
+                                                <th scope="col">Foto</th>
+                                                <th scope="col">Nome</th>
+                                                <th scope="col">Descricao</th>
+                                                <th scope="col">Quantidade</th>
+                                                <th scope="col">Experiencia</th>
+                                            </tr>
+                                        </thead>
+            
+                                        <tbody>
+                                            <!-- Detalhes: Dados da tabela -->
+                                            <% DTPokemon.forEach((row, index) => { %>
+                                            <tr>
+                                                <td><input type="checkbox" name="check_troca_ADD" ></td>
 
-                                        <td><%= row.id_pokemon %></td>
+                                                <td width="10"  >
+                                                    <input type="text" class="form-control form-control-sm" 
+                                                    name="" id=""  width="10" >
+                                                </td>
 
-                                        <td>
-                                            <a class='data_lighter' style="cursor: zoom-in;"
-                                                href="dist/img/pokemons/<%= row.foto %>">
-                                                <img src="dist/img/pokemons/<%= row.foto %>"
-                                                    class="rounded-wide img-table-m" alt="">
-                                            </a>
-                                        </td>
+                                                <td><%=row.id_usuario%></td>
+                                                <td><%=row.usuario%></td>
+                                                <td><%= row.id_pokemon %></td>
+                                                <td>
+                                                    <a class='data_lighter' style="cursor: zoom-in;"
+                                                        href="dist/img/pokemons/<%= row.foto %>">
+                                                        <img src="dist/img/pokemons/<%= row.foto %>"
+                                                            class="rounded-wide img-table-m" alt="">
+                                                    </a>
+                                                </td>
 
-                                        <td><%= row.nome %></td>
-                                        <td style="min-width: 150px;"><%= row.descricao %></td>
-                                        <td><%= row.quantidade %></td>
-                                        <td><%= row.experiencia_base %></td>
-    
-                                        <!-- Coluna: Opções -->
-                                        <td style="min-width: 130px;">
-                                            <button class="btn btn-xs btn-warning" data-toggle="modal"
-                                                data-target="#modalEDIT" onclick="(function(){
-                                                    
-                                                        //Setando o valor nos campos de texto 
-                                                        document.getElementById('cod_EDIT').value = '<%= row.id_pokemon %>';
-                                                        document.getElementById('foto_ZOOM').href = 'dist/img/materiais/<%= row.foto %>';
-                                                        document.getElementById('foto_EDIT').src = 'dist/img/materiais/<%= row.foto %>';
-                                                        document.getElementById('nome_EDIT').value = '<%= row.nome %>';
-                                                        document.getElementById('descricao_EDIT').value = '<%= row.descricao %>';
-                                                        document.getElementById('quantidade_EDIT').value = '<%= row.quantidade %>';
-                                                        document.getElementById('experiencia_base_EDIT').value = formatBDToDecimal('<%= row.experiencia_base %>');
-    
-                                                        })()">&nbsp;&nbsp;&nbsp;Visualizar&nbsp;&nbsp;
-    
-                                            </button>
+                                                <td><%= row.nome %></td>
+                                                <td style="min-width: 150px;"><%= row.descricao %></td>
+                                                <td><%= row.quantidade %></td>
+                                                <td><%= row.total_experiencia %></td>
+            
+                                            </tr>
+                                            <% }) %>
+                                        </tbody>
+            
+                                        <!-- Pesquisa -->
+                                        <tfoot>
+                                            <tr>
+                                                <th scope="col">Seleção</th>
+                                                <th scope="col">Trocar</th>
+                                                <th scope="col">Id Usuário</th>
+                                                <th scope="col">Usuário</th>
+                                                <th scope="col">Id Pokemon</th>
+                                                <th scope="col">Foto</th>
+                                                <th scope="col">Nome</th>
+                                                <th scope="col">Descricao</th>
+                                                <th scope="col">Quantidade</th>
+                                                <th scope="col">Experiencia</th>
+                                            </tr>
+                                        </tfoot>
+            
+                                    </table>
+                                    <% } else { %>
+                                    <!-- Não existe dados na tabela -->
+                                    <p class="text-center">Clique <a data-toggle="modal" data-target="#modalADD"
+                                            style="cursor:pointer; color:rgb(79, 79, 255)"> aqui </a> para adicionar um novo
+                                        registro.</p>
+                                    <% } %>
 
-                                        </td>
-                                    </tr>
-                                    <% }) %>
-                                </tbody>
-    
-                                <!-- Pesquisa -->
-                                <tfoot>
-                                    <tr>
-                                        <th scope="col">Seleção</th>
-                                        <th scope="col">Id Usuário</th>
-                                        <th scope="col">Usuário</th>
-                                        <th scope="col">Id Pokemon</th>
-                                        <th scope="col">Foto</th>
-                                        <th scope="col">Nome</th>
-                                        <th scope="col">Descricao</th>
-                                        <th scope="col">Quantidade</th>
-                                        <th scope="col">Experiencia</th>
-                                        <th class="th-none" scope="col">Opcoes</th>
-                                    </tr>
-                                </tfoot>
-    
-                            </table>
-                            <% } else { %>
-                            <!-- Não existe dados na tabela -->
-                            <p class="text-center">Clique <a data-toggle="modal" data-target="#modalADD"
-                                    style="cursor:pointer; color:rgb(79, 79, 255)"> aqui </a> para adicionar um novo
-                                registro.</p>
-                            <% } %>
-
+                            </div>
+                        </div>
                     </div>
+
+                    <hr>
+
+                    <div class="card-header">
+                        <label for="lblListaPokemon" class="label"> <strong> Meu estoque de Pokemons</strong></label>
+                    </div>
+                    
+
+                    <div class="panel panel-primary">
+                        <div class="panel-body scrollable-panel" style="overflow-y: scroll; height:350px; width: auto;">
+
+                            <div class="card-body">
+
+                                <% if (DTMeusPOkemons.length > 0) {%>
+                                    <table id="TBMeusPokemons" class="table table-hover">
+            
+                                        <!-- Cabeçalho: Titulos da tabela -->
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th scope="col">Seleção</th>
+                                                <th scope="col">Trocar</th>
+                                                <th scope="col">Id Pokemon</th>
+                                                <th scope="col">Foto</th>
+                                                <th scope="col">Nome</th>
+                                                <th scope="col">Descricao</th>
+                                                <th scope="col">Quantidade</th>
+                                                <th scope="col">Experiencia</th>
+                                            </tr>
+                                        </thead>
+            
+                                        <tbody>
+                                            <!-- Detalhes: Dados da tabela -->
+                                            <% DTMeusPOkemons.forEach((row, index) => { %>
+                                            <tr>
+                                                <td><input type="checkbox" name="check_troca_ADD" ></td>
+
+                                                <td width="10"  >
+                                                    <input type="text" class="form-control form-control-sm" 
+                                                    name="" id=""  width="10" >
+                                                </td>
+
+                                                <td><%= row.id_pokemon %></td>
+                                                <td>
+                                                    <a class='data_lighter' style="cursor: zoom-in;"
+                                                        href="dist/img/pokemons/<%= row.foto %>">
+                                                        <img src="dist/img/pokemons/<%= row.foto %>"
+                                                            class="rounded-wide img-table-m" alt="">
+                                                    </a>
+                                                </td>
+
+                                                <td><%= row.nome %></td>
+                                                <td style="min-width: 150px;"><%= row.descricao %></td>
+                                                <td><%= row.quantidade %></td>
+                                                <td><%= row.total_experiencia %></td>
+            
+                                            </tr>
+                                            <% }) %>
+                                        </tbody>
+            
+                                        <!-- Pesquisa -->
+                                        <tfoot>
+                                            <tr>
+                                                <th scope="col">Seleção</th>
+                                                <th scope="col">Trocar</th>
+                                                <th scope="col">Id Pokemon</th>
+                                                <th scope="col">Foto</th>
+                                                <th scope="col">Nome</th>
+                                                <th scope="col">Descricao</th>
+                                                <th scope="col">Quantidade</th>
+                                                <th scope="col">Experiencia</th>
+                                            </tr>
+                                        </tfoot>
+            
+                                    </table>
+                                    <% } else { %>
+                                    <!-- Não existe dados na tabela -->
+                                    <p class="text-center">Clique <a data-toggle="modal" data-target="#modalADD"
+                                            style="cursor:pointer; color:rgb(79, 79, 255)"> aqui </a> para adicionar um novo
+                                        registro.</p>
+                                    <% } %>                                
+
+
+                            </div>
+
+                        </div>
+                    </div>
+
+
 
                     <!-- ######################################################################### Modal para ADICIONAR -->
-                    <div class="modal fade" id="modalADD" data-backdrop="static">
-                        <div class="modal-dialog modal-lg">
+                    <div class="modal fade" id="modalTROCAR" data-backdrop="static">
+                        <div class="modal-dialog modal-xl">
                             <div class="modal-content">
                                 <!-- Header -->
                                 <div class="modal-header">
-                                    <h4 class="modal-title">Adicionar</h4>
+                                    <h4 class="modal-title">Efetivação Troca</h4>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -198,41 +292,14 @@
                                             </div>
                                         </div>
 
+
+                                        <!--  TextArea oculto para passagem de dados   -->  
+                                        <textarea  class="form-control rounded-0" rows="3" cols="100"
+                                        name="dados_TROCA" id="dados_TROCA" readonly="true" style="display: none;" ></textarea>
+
                                         <div class="row">                                            
                                             <div class="col-sm-6" style="text-align: center;">
-                                                <!-- Imagem -->
-                                                <div class="form-group"
-                                                    style="align-items: center;display: inline-grid;">
-
-                                                    <!-- Imagem e opção para zoom -->                                                    
-                                                    <img class="img-thumbnail-material mx-auto d-block" name="foto_ADD" id="foto_ADD" src="dist/img/generic/material-no-image.png">
-
-                                                    <!-- Botão Upload que simula im clique no elemento input file oculto -->
-                                                    <button type="button" class="btn btn-default btn-xs"
-                                                        style="margin-top:5px;place-self: end;"
-                                                        onclick="document.getElementById('image_ADD').click()"><i
-                                                        class="fas fa-cloud-upload-alt"></i>&nbsp;&nbsp;Upload</button>
-
-                                                    <!-- Elemento input file oculto -->
-                                                    <div class="custom-file" style="display: none;">
-                                                        <input type="file" class="custom-file-input form-control-sm"
-                                                            name="image_ADD" id="image_ADD" onclick="(function(){
-                                                                document.getElementById('image_ADD').onchange = function (evt) {
-                                                                    var tgt = evt.target || window.event.srcElement,
-                                                                    files = tgt.files;                                 
-                                                                    if (FileReader && files && files.length) {
-                                                                        var fr = new FileReader();
-                                                                        fr.onload = function () {                                                                        
-                                                                        document.getElementById('foto_ADD').src = fr.result;                                                                
-                                                                        }                                  
-                                                                    fr.readAsDataURL(files[0]);
-                                                                    }
-                                                                }
-                                                            })()">
-                                                        <label class="custom-file-label" for="image_ADD"></label>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                                
                                             
                                             <div class="col-sm-6">
                                                 <!-- Campos de cadastro -->
@@ -291,9 +358,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
-                                    </div>
-
                                     <!-- Botões -->
                                     <div class="modal-footer justify-content-between">
                                         <button type="submit"
@@ -305,14 +369,43 @@
                             </div>
                         </div>
                     </div>
-
-                    
-                    
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+
+<script>
+    function filtrarUsuario() {
+      var input, filter, table, tr, td, i, txtValue;
+
+      var e = document.getElementById("usuario_troca_filter_ADD");
+      var strUser = e.options[e.selectedIndex].text;
+      filter = strUser.toUpperCase() ;
+
+      table = document.getElementById("TBtable");
+      tr = table.getElementsByTagName("tr");
+
+      btn_Trocar = document.getElementById("btn_Trocar");
+
+      
+    //   for (i = 0; i < tr.length; i++) {
+    //     td = tr[i].getElementsByTagName("td")[0];
+    //     if (td) {
+    //       txtValue = td.innerHTML.text || td.innerText;
+
+    //       if (txtValue.toUpperCase().indexOf(filter) > -1) {
+    //         tr[i].style.display = "";
+    //       } else {
+    //         tr[i].style.display = "none";
+    //       }
+    //     }
+    //   }
+
+    }
+    </script>
+    
 
 <!-- Grava o texto recebido da variável status_Crud do routes/usuario
            lá no "tails.ejs" tem uma função no final que verifica o que tem neste span"
