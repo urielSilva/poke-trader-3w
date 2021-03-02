@@ -4,7 +4,7 @@
         <div class="row sm-2">
             <!-- Título -->
             <div class="col-sm-6">
-                <h1>Painel de Pokemons</h1>
+                <h1>Trocas elegíveis</h1>
             </div>
             <!-- Navegação histórica -->
             <div class="col-sm-6">
@@ -30,29 +30,44 @@
                     <!-- ######################################################################### Cabeçalho -->
                     <div class="card-header">
 
-                        <div class="btn-group">
-
-                            <label for="usuario_troca_filter_ADD" class="label">Filtre o usuário / Jogador: </label>&nbsp;&nbsp;
-
-                            <select class="form-control form-control-sm select2"
-                                  style="width: auto;" name="usuario_troca_filter_ADD"
-                                  id="usuario_troca_filter_ADD"
-                                  onchange="filtrarUsuario(this)" >
-                                  <option value="">-- Selecione --</option>
-                                  <% DTUsuario.forEach((row, index) => { %>
-                                    <option value="<%= row.familia %>"><%= row.usuario %>
-                                    </option>
-                                  <% }) %>
-
-                              </select>&nbsp;
-                        </div>
-
                         <!-- Botões -->
+
                         <div class="btn-group">
                             <!-- Abre o modal para INSERT -->
-                            <button type="button" id="btn_Trocar" class="btn btn-sm btn-outline-primary" data-toggle="modal"
-                                data-target="#modalTROCAR" onclick="( function(){  document.getElementById('dados_TROCA').value = '1,10,15'; 
-                            })()"   >&nbsp;Trocar&nbsp;
+                            <button type="button" class="btn btn-sm btn-outline-primary" data-toggle="modal"
+                                data-target="#modalFiltroUsuario" onclick="(function(){
+                                    var _select = document.getElementById('selUsuario');
+                                    document.getElementById('selUsuario').innerText = null;
+
+                                    var blItem = false;
+                                    var _aUsuarios = [];
+
+                                    <% if (DTPokemon.length > 0) {%> 
+                                        <% DTPokemon.forEach((row, index) => { %>
+                                            _aUsuarios.push( [ '<%= row.id_usuario%>', '<%= row.usuario%>' ] );
+                                        <% }) %>
+                                    <% } %>
+
+                                    <% if (DTPokemon.length > 0) {%> 
+                                        <% DTPokemon.forEach((row, index) => { %>
+                                            if(  !blItem  )
+                                            {
+                                                var option = document.createElement('option');
+                                                option.value = '<%= row.Id_usuario%>'; 
+                                                option.text = '<%= row.usuario%>';
+                                                _select.add(option);
+                                                blItem = false;
+                                            }
+
+                                            for(var i = 0; i < _aUsuarios.length; i++) { 
+                                                blItem = false;
+                                                if( _aUsuarios[i][1] === '<%= row.usuario%>' ) {
+                                                    blItem = true;
+                                                }
+                                            }
+                                        <% }) %>
+                                    <% } %>
+                                })()" >&nbsp;Filtrar Usuário&nbsp;
                             </button>
                         </div>
 
@@ -90,280 +105,109 @@
                                 <i class="fas fa-times"></i>
                             </button>
                         </div>
+
                     </div>
 
+                    <!-- ######################################################################### Tabela -->
+                    <div class="card-body">
 
-                    <div class="panel panel-primary">
-                        <div class="panel-body scrollable-panel" style="overflow-y: scroll; height:350px; width: auto;">
+                        <% if (DTPokemon.length > 0) {%>
+                        <table id="TBtable" class="table table-hover">
 
-                            <!-- ######################################################################### Tabela -->
-                            <div class="card-body">
+                            <!-- Cabeçalho: Titulos da tabela -->
+                            <thead class="thead-light">
+                                <tr>
+                                    <th scope="col">Id Usuário</th>
+                                    <th scope="col">Usuário</th>
+                                    <th scope="col">id</th>
+                                    <th scope="col">Foto</th>
+                                    <th scope="col">Nome</th>
+                                    <th scope="col">Descricao</th>
+                                    <th scope="col">Quantidade</th>
+                                    <th scope="col">Experiencia</th>
+                                    <th scope="col">Experiencia Total</th>
+                                </tr>
+                            </thead>
 
-                                <% if (DTPokemon.length > 0) {%>
-                                    <table id="TBtable" class="table table-hover">
-            
-                                        <!-- Cabeçalho: Titulos da tabela -->
-                                        <thead class="thead-light">
-                                            <tr>
-                                                <th scope="col">Seleção</th>
-                                                <th scope="col">Trocar</th>
-                                                <th scope="col">Id Usuário</th>
-                                                <th scope="col">Usuário</th>
-                                                <th scope="col">Id Pokemon</th>
-                                                <th scope="col">Foto</th>
-                                                <th scope="col">Nome</th>
-                                                <th scope="col">Descricao</th>
-                                                <th scope="col">Quantidade</th>
-                                                <th scope="col">Experiencia</th>
-                                            </tr>
-                                        </thead>
-            
-                                        <tbody>
-                                            <!-- Detalhes: Dados da tabela -->
-                                            <% DTPokemon.forEach((row, index) => { %>
-                                            <tr>
-                                                <td><input type="checkbox" name="check_troca_ADD" ></td>
+                            <tbody>
+                                
+                                <!-- Detalhes: Dados da tabela -->
+                                <% DTPokemon.forEach((row, index) => { %>
+                                <tr>
+                                    <td><%= row.id_usuario %></td>
+                                    <td><%= row.usuario%></td>
+                                    <td><%= row.id_pokemon %></td>
+                                    <td>
+                                        <a class='data_lighter' style="cursor: zoom-in;"
+                                            href="dist/img/pokemons/<%= row.foto %>">
+                                            <img src="dist/img/pokemons/<%= row.foto %>"
+                                                class="rounded-wide img-table-m" alt="">
+                                        </a>
+                                    </td>
+                                    <td><%= row.nome %></td>
+                                    <td style="min-width: 150px;"><%= row.descricao %></td>
+                                    <td><%= row.quantidade %></td>
+                                    <td><%= row.experiencia_base %></td>
+                                    <td><%= row.total_experiencia %></td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
 
-                                                <td width="10"  >
-                                                    <input type="text" class="form-control form-control-sm" 
-                                                    name="" id=""  width="10" >
-                                                </td>
+                            <!-- Pesquisa -->
+                            <tfoot>
+                                <tr>
+                                    <th scope="col">Id Usuário</th>
+                                    <th scope="col">Usuário</th>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Foto</th>
+                                    <th scope="col">Nome</th>
+                                    <th scope="col">Descricao</th>
+                                    <th scope="col">Quantidade</th>
+                                    <th scope="col">Experiencia</th>
+                                    <th scope="col">Experiencia Total</th>
+                                </tr>
+                            </tfoot>
 
-                                                <td><%=row.id_usuario%></td>
-                                                <td><%=row.usuario%></td>
-                                                <td><%= row.id_pokemon %></td>
-                                                <td>
-                                                    <a class='data_lighter' style="cursor: zoom-in;"
-                                                        href="dist/img/pokemons/<%= row.foto %>">
-                                                        <img src="dist/img/pokemons/<%= row.foto %>"
-                                                            class="rounded-wide img-table-m" alt="">
-                                                    </a>
-                                                </td>
-
-                                                <td><%= row.nome %></td>
-                                                <td style="min-width: 150px;"><%= row.descricao %></td>
-                                                <td><%= row.quantidade %></td>
-                                                <td><%= row.total_experiencia %></td>
-            
-                                            </tr>
-                                            <% }) %>
-                                        </tbody>
-            
-                                        <!-- Pesquisa -->
-                                        <tfoot>
-                                            <tr>
-                                                <th scope="col">Seleção</th>
-                                                <th scope="col">Trocar</th>
-                                                <th scope="col">Id Usuário</th>
-                                                <th scope="col">Usuário</th>
-                                                <th scope="col">Id Pokemon</th>
-                                                <th scope="col">Foto</th>
-                                                <th scope="col">Nome</th>
-                                                <th scope="col">Descricao</th>
-                                                <th scope="col">Quantidade</th>
-                                                <th scope="col">Experiencia</th>
-                                            </tr>
-                                        </tfoot>
-            
-                                    </table>
-                                    <% } else { %>
-                                    <!-- Não existe dados na tabela -->
-                                    <p class="text-center">Clique <a data-toggle="modal" data-target="#modalADD"
-                                            style="cursor:pointer; color:rgb(79, 79, 255)"> aqui </a> para adicionar um novo
-                                        registro.</p>
-                                    <% } %>
-
-                            </div>
-                        </div>
+                        </table>
+                        <% } else { %>
+                        <!-- Não existe dados na tabela -->
+                        <p class="text-center">Clique <a data-toggle="modal" data-target="#modalADD"
+                                style="cursor:pointer; color:rgb(79, 79, 255)"> aqui </a> para adicionar um novo
+                            registro.</p>
+                        <% } %>
                     </div>
 
-                    <hr>
-
-                    <div class="card-header">
-                        <label for="lblListaPokemon" class="label"> <strong> Meu estoque de Pokemons</strong></label>
-                    </div>
-                    
-
-                    <div class="panel panel-primary">
-                        <div class="panel-body scrollable-panel" style="overflow-y: scroll; height:350px; width: auto;">
-
-                            <div class="card-body">
-
-                                <% if (DTMeusPOkemons.length > 0) {%>
-                                    <table id="TBMeusPokemons" class="table table-hover">
-            
-                                        <!-- Cabeçalho: Titulos da tabela -->
-                                        <thead class="thead-light">
-                                            <tr>
-                                                <th scope="col">Seleção</th>
-                                                <th scope="col">Trocar</th>
-                                                <th scope="col">Id Pokemon</th>
-                                                <th scope="col">Foto</th>
-                                                <th scope="col">Nome</th>
-                                                <th scope="col">Descricao</th>
-                                                <th scope="col">Quantidade</th>
-                                                <th scope="col">Experiencia</th>
-                                            </tr>
-                                        </thead>
-            
-                                        <tbody>
-                                            <!-- Detalhes: Dados da tabela -->
-                                            <% DTMeusPOkemons.forEach((row, index) => { %>
-                                            <tr>
-                                                <td><input type="checkbox" name="check_troca_ADD" ></td>
-
-                                                <td width="10"  >
-                                                    <input type="text" class="form-control form-control-sm" 
-                                                    name="" id=""  width="10" >
-                                                </td>
-
-                                                <td><%= row.id_pokemon %></td>
-                                                <td>
-                                                    <a class='data_lighter' style="cursor: zoom-in;"
-                                                        href="dist/img/pokemons/<%= row.foto %>">
-                                                        <img src="dist/img/pokemons/<%= row.foto %>"
-                                                            class="rounded-wide img-table-m" alt="">
-                                                    </a>
-                                                </td>
-
-                                                <td><%= row.nome %></td>
-                                                <td style="min-width: 150px;"><%= row.descricao %></td>
-                                                <td><%= row.quantidade %></td>
-                                                <td><%= row.total_experiencia %></td>
-            
-                                            </tr>
-                                            <% }) %>
-                                        </tbody>
-            
-                                        <!-- Pesquisa -->
-                                        <tfoot>
-                                            <tr>
-                                                <th scope="col">Seleção</th>
-                                                <th scope="col">Trocar</th>
-                                                <th scope="col">Id Pokemon</th>
-                                                <th scope="col">Foto</th>
-                                                <th scope="col">Nome</th>
-                                                <th scope="col">Descricao</th>
-                                                <th scope="col">Quantidade</th>
-                                                <th scope="col">Experiencia</th>
-                                            </tr>
-                                        </tfoot>
-            
-                                    </table>
-                                    <% } else { %>
-                                    <!-- Não existe dados na tabela -->
-                                    <p class="text-center">Clique <a data-toggle="modal" data-target="#modalADD"
-                                            style="cursor:pointer; color:rgb(79, 79, 255)"> aqui </a> para adicionar um novo
-                                        registro.</p>
-                                    <% } %>                                
-
-
-                            </div>
-
-                        </div>
-                    </div>
-
-
-
-                    <!-- ######################################################################### Modal para ADICIONAR -->
-                    <div class="modal fade" id="modalTROCAR" data-backdrop="static">
-                        <div class="modal-dialog modal-xl">
+                    <!-- ######################################################################### Modal para Selecionar USUARIO -->
+                    <div class="modal fade" id="modalFiltroUsuario" data-backdrop="static">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <!-- Header -->
                                 <div class="modal-header">
-                                    <h4 class="modal-title">Efetivação Troca</h4>
+                                    <h4 class="modal-title">Selecione um usuário</h4>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
 
                                 <!-- Conteúdo central do modal -->
-                                <form role="form" action="/addPokemon" method="post" enctype="multipart/form-data">
+                                <form role="form" action="/efetivarTroca" method="post" enctype="multipart/form-data">
                                     <!-- Campos do formulário -->
                                     <div class="modal-body">
-                                        <!-- Cod -->
-                                        <div class="row" style="display: none;">
+
+                                        <div class="row">
                                             <div class="col-sm-12">
                                                 <div class="form-group">
-                                                    <label for="cod_ADD" class="label">Cod</label>
-                                                    <input type="text" class="form-control form-control-sm"
-                                                        name="cod_ADD" id="cod_ADD" placeholder="Cod" readonly=“true”>
+                                                    <select class="browser-default custom-select"  name="selUsuario" id="selUsuario" onselect="( function() { alert('Teste' );   }) " >
+                                                        <option selected>Selecione o usuário </option>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
 
-
-                                        <!--  TextArea oculto para passagem de dados   -->  
-                                        <textarea  class="form-control rounded-0" rows="3" cols="100"
-                                        name="dados_TROCA" id="dados_TROCA" readonly="true" style="display: none;" ></textarea>
-
-                                        <div class="row">                                            
-                                            <div class="col-sm-6" style="text-align: center;">
-                                                
-                                            
-                                            <div class="col-sm-6">
-                                                <!-- Campos de cadastro -->
-                                                <div class="row">
-                                                    <div class="col-sm-12" style="min-inline-size: -webkit-fill-available;">
-                                                        <!-- Material, familia -->
-                                                        <div class="row">
-                                                            <!-- Material -->
-                                                            <div class="col-sm-6">
-                                                                <div class="form-group">
-                                                                    <label for="nome_ADD" class="label">Nome</label>
-                                                                    <input type="text" class="form-control form-control-sm"
-                                                                        name="nome_ADD" id="nome_ADD"
-                                                                        placeholder="Nome" required>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <!-- Descrição -->
-                                                        <div class="row">
-                                                            <div class="col-sm-12">
-                                                                <div class="form-group">
-                                                                    <label for="descricao_ADD" class="label">Descrição</label>
-                                                                    <input type="text" class="form-control form-control-sm"
-                                                                        name="descricao_ADD" id="descricao_ADD"
-                                                                        placeholder="Descrição" required>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <!-- Multiplo -->
-                                                        <div class="row">
-                                                            <!-- Multiplo -->
-                                                            <div class="col-sm-4">
-                                                                <div class="form-group">
-                                                                    <label for="quantidade_ADD" class="label">Múltiplo</label>
-                                                                    <input type="text" class="form-control form-control-sm num"
-                                                                        name="quantidade_ADD" id="quantidade_ADD"
-                                                                        placeholder="Quantidade" required>
-                                                                </div>
-                                                            </div>
-
-                                                            <!-- Valor -->
-                                                            <div class="col-sm-4">
-                                                                <div class="form-group">
-                                                                    <label for="experiencia_ADD" class="label">Experiência</label>
-                                                                    <input type="text"
-                                                                        class="form-control form-control-sm num"
-                                                                        name="experiencia_ADD" id="experiencia_ADD" placeholder="Experiência"
-                                                                        required>
-                                                                </div>
-                                                            </div>
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
                                     <!-- Botões -->
                                     <div class="modal-footer justify-content-between">
-                                        <button type="submit"
-                                            class="btn btn-primary" id="btnSalvar_ADD">&nbsp;&nbsp;Salvar&nbsp;&nbsp;</button>
-                                        <button type="button" class="btn btn-secondary"
-                                            data-dismiss="modal">Cancelar</button>
+                                        <button type="submit" class="btn btn-primary" id="btnSalvar_FILTRO">&nbsp;&nbsp;Efetivar&nbsp;&nbsp;</button>
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                                     </div>
                                 </form>
                             </div>
@@ -374,38 +218,6 @@
         </div>
     </div>
 </section>
-
-
-<script>
-    function filtrarUsuario() {
-      var input, filter, table, tr, td, i, txtValue;
-
-      var e = document.getElementById("usuario_troca_filter_ADD");
-      var strUser = e.options[e.selectedIndex].text;
-      filter = strUser.toUpperCase() ;
-
-      table = document.getElementById("TBtable");
-      tr = table.getElementsByTagName("tr");
-
-      btn_Trocar = document.getElementById("btn_Trocar");
-
-      
-    //   for (i = 0; i < tr.length; i++) {
-    //     td = tr[i].getElementsByTagName("td")[0];
-    //     if (td) {
-    //       txtValue = td.innerHTML.text || td.innerText;
-
-    //       if (txtValue.toUpperCase().indexOf(filter) > -1) {
-    //         tr[i].style.display = "";
-    //       } else {
-    //         tr[i].style.display = "none";
-    //       }
-    //     }
-    //   }
-
-    }
-    </script>
-    
 
 <!-- Grava o texto recebido da variável status_Crud do routes/usuario
            lá no "tails.ejs" tem uma função no final que verifica o que tem neste span"

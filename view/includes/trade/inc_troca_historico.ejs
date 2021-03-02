@@ -1,0 +1,308 @@
+<!-- Page Content (header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row sm-2">
+            <!-- Título -->
+            <div class="col-sm-6">
+                <h1>Histórico de Trocas </h1>
+            </div>
+            <!-- Navegação histórica -->
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="admin">Home</a></li>
+                    <li class="breadcrumb-item active">Trade</li>
+                    <li class="breadcrumb-item active">Trocas</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Page Content (conteúdo) -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+
+            <!-- Para iniciar fechado, adicione collapsed-card na class-->
+                <div class="card card-primary card-outline">
+
+                    <!-- ######################################################################### Cabeçalho -->
+                    <div class="card-header">
+
+                        <!-- Botão Ocultar ou exibir o card -->
+                        <div class="card-tools">
+                            <!-- Botão Abrir/fechar card (Icone: fa-minus ou fa-plus) -->
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
+                                title="Collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <!-- Botão destruir card -->
+                            <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip"
+                                title="Remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <!-- ######################################################################### Tabela -->
+                    <div class="card-body">
+
+                        <% if (DTTroca.length > 0) {%>
+                        <table id="TBtable" class="table table-hover">
+
+                            <!-- Cabeçalho: Titulos da tabela -->
+                            <thead class="thead-light">
+                                <tr>
+                                    <th scope="col">Id Troca</th>
+                                    <th scope="col">Data</th>
+                                    <th scope="col">Id Usuário</th>
+                                    <th scope="col">Usuário</th>
+                                    <th scope="col">Id Usuário Troca</th>
+                                    <th scope="col">Usuário Troca</th>
+                                    <th scope="col">Tt Experiencia Ofer</th>
+                                    <th scope="col">Tt Experiencia Prop </th>
+                                    <th scope="col">Diferença</th>
+                                    <th scope="col">Opcoes</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <!-- Detalhes: Dados da tabela -->
+                                <% DTTroca.forEach((row, index) => { %>
+                                <tr>
+                                    <td><%= row.id_troca%></td>
+                                    <td><%= row.data_troca%></td>
+                                    <td><%= row.id_usuario%></td>
+                                    <td><%= row.nome_usuario%></td>
+                                    <td><%= row.id_usuario_troca%></td>
+                                    <td><%= row.nome_usuario_troca%></td>
+                                    <td><%= row.total_experiencia_oferta %></td>
+                                    <td><%= row.total_experiencia_proposta %></td>
+                                    <td><%= row.total_pontos_diferenca_experiencia %></td>
+                                    <!-- Coluna: Opções -->
+                                    <td style="min-width: 130px;">
+                                        <button class="btn btn-xs btn-warning" data-toggle="modal"
+                                            data-target="#modalEDIT" onclick="(function(){  })()">&nbsp;&nbsp;&nbsp;Ver itens&nbsp;&nbsp;
+                                        </button>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
+
+                            <!-- Pesquisa -->
+                            <tfoot>
+                                <tr>
+                                    <th scope="col">Id Troca</th>
+                                    <th scope="col">Data</th>
+                                    <th scope="col">Id Usuário</th>
+                                    <th scope="col">Usuário</th>
+                                    <th scope="col">Id Usuário Troca</th>
+                                    <th scope="col">Usuário Troca </th>
+                                    <th scope="col">Tt Experiencia Ofer </th>
+                                    <th scope="col">Tt Experiencia Prop </th>
+                                    <th scope="col">Diferença</th>
+                                    <th class="th-none" scope="col">Opcoes</th>
+                                </tr>
+                            </tfoot>
+
+                        </table>
+                        <% } else { %>
+                        <!-- Não existe dados na tabela -->
+                        <p class="text-center">Clique <a data-toggle="modal" data-target="#modalADD"
+                                style="cursor:pointer; color:rgb(79, 79, 255)"> aqui </a> para adicionar um novo
+                            registro.</p>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script>
+    function ObterLinha(n) {
+        var row = n.parentNode.parentNode;
+        var cols = row.getElementsByTagName("td");
+        var i=0;
+
+        while (i < cols.length) {
+            var val = cols[i].childNodes[0].nodeValue;
+            if (val != null) {
+                const elem = cols[i].firstElementChild;
+
+                if( n.checked )
+                {
+                    if(  elem != null && elem.type === 'text' ){
+                        elem.disabled = false;
+                        elem.value = "1";
+                    }
+                }
+
+                if( ! n.checked  )
+                {
+                    if(  elem != null && elem.type === 'text' ){
+                            elem.disabled = true;
+                            elem.value = "0";
+                    }
+                }
+            }
+            i++;
+        }
+    } 
+
+    //--
+    //-- Calucular Troca
+    //--
+    
+    function calcularTroca() {
+
+        //-- Processar itens do usuário
+
+        //-- Obter tabela
+        //-- ---------------
+        var tbPokemonUsuario = document.getElementById('TBtable');
+        var tbMeusPokemons = document.getElementById('TBtableMeusPokemons');
+
+        document.getElementById('TexMensagem').value = "";
+
+        var _arItemTroca = [];
+
+        var r=0; 
+        var _totalOferta = 0;
+        var _totalProposta = 0; 
+        var _totalExperienciaOferta = 0;
+        var _totalExperienciaProposta = 0;
+        var _bProcessar = false;
+
+        while(row = tbPokemonUsuario.rows[r++])
+        {
+            var cols = row.getElementsByTagName("td");
+            var i=0;
+            var _qtdOferta = 0 ;
+
+            while (i < cols.length) {
+                var val = cols[i].childNodes[0].nodeValue;
+                if (val != null) {
+                    const elem = cols[i].firstElementChild;
+
+                    if(  elem != null && elem.type === 'checkbox' ){
+                        if( elem.checked  )
+                             _bProcessar = true;
+                        else
+                            _bProcessar = false;
+                        //-- 
+                    }
+
+                    if( _bProcessar ){
+                        if(  elem != null && elem.type === 'text' ){
+                            
+                            if(  i === 1   ){
+                                _qtdOferta = parseInt(elem.value );
+                                _totalOferta += _qtdOferta;
+                            }
+                        }
+                        //-- 
+                        if(  i === 8  ){
+                            if( parseInt( val ) < _qtdOferta  ){
+                                //-- Ajusta quantidade 
+                                _totalOferta -= ( _qtdOferta - parseInt( val ) );
+                            }
+                        }
+                        //-- 
+                        if(  i === 9  ){
+                            _totalExperienciaOferta +=  ( _totalOferta * parseInt( val ));
+                         }
+                    }
+                    i++;
+                }
+            }
+        }
+        //--
+        r = 0; 
+        _totalProposta = 0; 
+        _bProcessar = false;
+
+        //--
+        while( row = tbMeusPokemons.rows[r++]){
+            var cols = row.getElementsByTagName("td");
+            var i=0;
+            var _qtdProposta = 0 ;
+
+            while (i < cols.length) {
+                var val = cols[i].childNodes[0].nodeValue;
+                if (val != null) {
+                    const elem = cols[i].firstElementChild;
+
+                    if(  elem != null && elem.type === 'checkbox' ){
+                        if( elem.checked  )
+                             _bProcessar = true;
+                        else
+                            _bProcessar = false;
+                        //-- 
+                    }
+
+                    if( _bProcessar ){
+                        if(  elem != null && elem.type === 'text' ){
+                            
+                            if(  i === 1   ){
+                                _qtdProposta = parseInt(elem.value );
+                                _totalProposta += _qtdProposta;
+                            }
+                        }
+                        //-- 
+                        if(  i === 6  ){
+                            if( parseInt( val ) < _qtdProposta  ){
+                                //-- Ajusta quantidade 
+                                _totalProposta -= ( _qtdProposta - parseInt( val ) );
+                            }
+                        }
+                        //-- 
+                        if(  i === 7  ){
+                            _totalExperienciaProposta += _totalProposta * parseInt( val );
+                         }
+                    }
+                    i++;
+                }
+            }
+        }
+        //--
+        document.getElementById('txtQtdeOferta').value = _totalOferta ;
+        document.getElementById('txtExperienciaTotal').value = _totalExperienciaOferta; 
+        document.getElementById('txtQtdeProposta').value =  _totalProposta;
+        document.getElementById('txtExperienciaTotalProposta').value =  _totalExperienciaProposta;
+        //--
+
+        //-- Validar regras 
+        if(  _totalOferta > 6 || _totalProposta > 6  ){
+            document.getElementById('TexMensagem').value = " Erro : Só podem ser feitas trocas na faixa entre 1 e 6 Pokemons de cada lado!! "; 
+        }
+
+        //-- Validar se troca Justa
+        var _totalJusto = ( _totalExperienciaProposta - _totalExperienciaOferta ); 
+        _totalJusto = Math.abs(  _totalJusto  );
+
+        if( _totalJusto > 20  ){
+            document.getElementById("TexMensagem").style.backgroundColor = "red";
+            document.getElementById('TexMensagem').style.color = "white";
+            document.getElementById('TexMensagem').value = " Erro : Troca não é justa, total de eperiência superior a 20 pontos !! "; 
+        }else{
+            document.getElementById("TexMensagem").style.backgroundColor = "white";
+            document.getElementById('TexMensagem').style.color = "black";
+            document.getElementById('TexMensagem').value = "Troca justa";
+        }
+
+        _totalOferta = 0;
+        _totalProposta = 0; 
+        _totalExperienciaOferta = 0;
+        _totalExperienciaProposta = 0;
+    } 
+
+</script>
+
+<!-- Grava o texto recebido da variável status_Crud do routes/usuario
+           lá no "tails.ejs" tem uma função no final que verifica o que tem neste span"
+           e dispara uma função de alerta do toastr de acordo com o texto -->
+<span style="display:none" id='status_Crud'><%= status_Crud %></span>

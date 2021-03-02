@@ -45,8 +45,10 @@ module.exports = (io) => { //Aqui recebo o socket.io lá do app.js
 
     //================================================================== TRADE
     //Rotas para a página de "Funcionalidade Troca"
-    const { pageTroca } = require('../dao/trade/troca.js');
+    const { pageTroca, efetivarTroca, pageTrocas } = require('../dao/trade/troca.js');
     rotas.get('/troca', pageTroca); 
+    rotas.post('/efetivarTroca', efetivarTroca); 
+    rotas.get('/trocas', pageTrocas); 
 
     //Exportando este módulo
     return rotas;
